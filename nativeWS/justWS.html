@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="messageFromSocket"></div>
+    <script>
+      const messageDiv = document.getElementById("messageFromSocket");
+      const hedno = messageDiv.appendChild(document.createElement("h1"));
+      let ws = new WebSocket(`ws://localhost:5500`);
+      console.log(ws);
+      ws.onmessage = (event) => {
+        console.log(event);
+        hedno.innerHTML = event.data;
+      };
+      ws.onopen = (event) => {
+        ws.send("Hello again master wizard");
+      };
+    </script>
+  </body>
+</html>
