@@ -14,12 +14,13 @@ const io = new Server(expressServer, {
     origin: "*",
   },
 });
+//'connect' is the same as 'connection'
+//create socket io server (io)
 io.on("connection", (socket) => {
-  socket.emit("messageFromServer", {
-    data: "Welcome to the socket.io server",
-  });
-  socket.on("messageToServer", (dataFromClient) => {
-    console.log(dataFromClient);
+  //receive event
+  //when receive message from client emit message to all clients
+  socket.on("userMessageToServer", (message) => {
+    //need to use Server(io) NOT single socket
+    io.emit("userMessageToClient", message);
   });
 });
-// console.log(io);
