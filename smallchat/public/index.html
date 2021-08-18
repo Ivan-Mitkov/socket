@@ -11,24 +11,7 @@
       integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
       crossorigin="anonymous"
     />
-    <style>
-      textarea {
-        width: 100%;
-        min-height: 55px;
-      }
-      #messages {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-      }
-      #messages li {
-        padding: 5px 10px;
-        margin-left: 40px;
-      }
-      #messages li:nth-child(even) {
-        background-color: #ededed;
-      }
-    </style>
+    <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <h1>Chat</h1>
@@ -57,28 +40,6 @@
       </div>
     </div>
     <script src="/socket.io/socket.io.js"></script>
-    <script>
-      //get socket.io
-      const socket = io("http://localhost:8000");
-      //get value from text area
-      document
-        .querySelector("#message-form")
-        .addEventListener("submit", (event) => {
-          event.preventDefault();
-          const message = document.querySelector("#user-message").value;
-          //send value to the server
-          socket.emit("userMessageToServer", {
-            data: message,
-          });
-        });
-        //receive value from the server
-      socket.on("userMessageToClient", (message) => {
-        const listOfMessages = document.querySelector("#messages");
-        const singleMessage = document.createElement("li");
-        listOfMessages.appendChild(singleMessage).innerText = message.data;
-        let text = document.querySelector("#user-message");
-        text.value = "";
-      });
-    </script>
+    <script src="./scripts.js"></script>
   </body>
 </html>

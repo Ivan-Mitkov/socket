@@ -1,0 +1,16 @@
+textarea {
+  width: 100%;
+  min-height: 55px;
+}
+#messages {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+#messages li {
+  padding: 5px 10px;
+  margin-left: 40px;
+}
+#messages li:nth-child(even) {
+  background-color: #ededed;
+}
