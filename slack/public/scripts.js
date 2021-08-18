@@ -1,34 +1,24 @@
 //get socket.io
 const socket = io("http://localhost:8000");
-const adminSocket = io("http://localhost:8000/admin");
-// socket.on("connect", () => {
-//   console.log("Client connect to main namespace");
 
-//   console.log(socket.id);
-// });
-adminSocket.on("welcome", (dataFromServer) => {
-  console.log("Client connect to admin namespace");
-  console.log(adminSocket.id);
-  console.log(dataFromServer);
-});
-//joining room from the main namespace
-socket.on("joined", (data) => {
-  console.log(data);
-});
-//get value from text area
-document.querySelector("#message-form").addEventListener("submit", (event) => {
-  event.preventDefault();
-  const message = document.querySelector("#user-message").value;
-  //send value to the server
-  socket.emit("userMessageToServer", {
-    data: message,
+//listen for nsList - list of all namespaces
+//socket is connected to the main namespace
+socket.on("nsList", (nsData) => {
+  console.log(nsData);
+  //update DOM with namespaces
+  let domNamespaces = document.querySelector(".namespaces");
+
+  nsData.forEach((ns) => {
+    let singleNamespace = document.createElement("div");
+    singleNamespace.classList.add("namespace");
+    let namespaceImage = document.createElement("img");
+    namespaceImage.setAttribute("src", ns.img);
+    namespaceImage.setAttribute("ns", ns.endpoint);
+    singleNamespace.appendChild(namespaceImage);
+    domNamespaces.appendChild(singleNamespace);
+    //add a click listener to each namespace
+    singleNamespace.addEventListener("click", () => {
+      const singleNSenpoint=ns.endpoint
+    });
   });
-});
-//receive value from the server
-socket.on("userMessageToClient", (message) => {
-  const listOfMessages = document.querySelector("#messages");
-  const singleMessage = document.createElement("li");
-  listOfMessages.appendChild(singleMessage).innerText = message.data;
-  let text = document.querySelector("#user-message");
-  text.value = "";
 });
