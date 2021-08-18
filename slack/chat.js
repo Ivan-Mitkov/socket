@@ -33,7 +33,10 @@ io.on("connection", (socket) => {
 });
 // loop through namespaces
 namespaces.forEach((ns) => {
-  io.of(ns.endpoint).on("connection", (socket) => {
-    console.log(`${socket.id} has join ${ns.endpoint}`);
+  io.of(ns.endpoint).on("connection", (nsSocket) => {
+    console.log(`${nsSocket.id} has join ${ns.endpoint}`);
+    //connect to some namespace
+    //send that ns back
+    nsSocket.emit("nsRoomLoad", namespaces[0].rooms);
   });
 });
