@@ -1,11 +1,10 @@
-
 //get socket.io
 const socket = io("http://localhost:8000");
-
+let nsSocket = "";
 //listen for nsList - list of all namespaces
 //socket is connected to the main namespace
 socket.on("nsList", (nsData) => {
-  console.log(nsData);
+  // console.log(nsData);
   //update DOM with namespaces
   let domNamespaces = document.querySelector(".namespaces");
   if (domNamespaces.childElementCount > 0) {
@@ -25,5 +24,5 @@ socket.on("nsList", (nsData) => {
       alert(`clicked ${singleNSenpoint}`);
     });
   });
-  joinNs('/wiki');
+  joinNs("/wiki");
 });
