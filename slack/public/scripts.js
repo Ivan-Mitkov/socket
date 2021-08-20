@@ -1,5 +1,12 @@
+// prom for username
+const username = prompt("What is your username");
 //get socket.io
-const socket = io("http://localhost:8000");
+// const socket = io("http://localhost:8000");
+const socket = io("http://localhost:8000", {
+  query: {
+    username: username,
+  },
+});
 let nsSocket = "";
 //listen for nsList - list of all namespaces
 //socket is connected to the main namespace

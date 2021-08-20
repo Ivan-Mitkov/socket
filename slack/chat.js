@@ -21,6 +21,8 @@ const io = new Server(expressServer, {
 
 //Connect to the main namespace
 io.on("connection", (socket) => {
+  // console.log(socket.handshake);
+
   //build an array to send back with the img and endpoint for each NS
   let nsData = namespaces.map((ns) => {
     return {
@@ -34,6 +36,8 @@ io.on("connection", (socket) => {
 // loop through namespaces
 namespaces.forEach((ns, i) => {
   io.of(ns.endpoint).on("connection", (nsSocket) => {
+    //get query params from client
+    const username = nsSocket.handshake.query.username;
     //connect to some namespace
     //send that ns back
     nsSocket.emit("nsRoomLoad", namespaces[i].rooms);
@@ -44,7 +48,7 @@ namespaces.forEach((ns, i) => {
       //[Set Iterator] { 'N0Pd0o1_5mUVtSHlAAAM', 'Other' } we need 'Other' this is the old room before entering new one
       const roomTitle = [...nsSocket.rooms.keys()][1];
       nsSocket.leave(roomTitle);
-      
+
       //1.join the room
       nsSocket.join(roomToJoin);
       //find the room
@@ -64,7 +68,8 @@ namespaces.forEach((ns, i) => {
       const fullMsg = {
         text: msg.text,
         time: Date.now(),
-        username: "Ivan",
+        //get username from query send by the client
+        username: username,
         avatar:
           "https://images.pexels.com/photos/7543203/pexels-photo-7543203.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=15&w=15",
       };
