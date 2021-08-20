@@ -3,6 +3,7 @@ const socket = io("http://localhost:8000");
 let nsSocket = "";
 //listen for nsList - list of all namespaces
 //socket is connected to the main namespace
+
 socket.on("nsList", (nsData) => {
   // console.log(nsData);
   //update DOM with namespaces
@@ -21,8 +22,9 @@ socket.on("nsList", (nsData) => {
     //add a click listener to each namespace
     singleNamespace.addEventListener("click", () => {
       const singleNSenpoint = ns.endpoint;
-      alert(`clicked ${singleNSenpoint}`);
+      joinNs(singleNSenpoint);
     });
   });
+
   joinNs("/wiki");
 });

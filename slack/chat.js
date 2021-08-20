@@ -8,11 +8,11 @@ const app = express();
 const __dirname = path.resolve(path.dirname(""));
 
 app.use(express.static(path.join(__dirname, "/public")));
-
+//create express server
 const expressServer = app.listen(8000, () => {
   console.log("server listen on port 8000");
 });
-
+// create socket.io server and pass express server
 const io = new Server(expressServer, {
   cors: {
     origin: "*",
@@ -32,34 +32,30 @@ io.on("connection", (socket) => {
   socket.emit("nsList", nsData);
 });
 // loop through namespaces
-namespaces.forEach((ns) => {
+namespaces.forEach((ns, i) => {
   io.of(ns.endpoint).on("connection", (nsSocket) => {
-    console.log(`${nsSocket.id} has join ${ns.endpoint}`);
     //connect to some namespace
     //send that ns back
-    nsSocket.emit("nsRoomLoad", namespaces[0].rooms);
+    nsSocket.emit("nsRoomLoad", namespaces[i].rooms);
 
     //handle joining room from the client
-    nsSocket.on("joinRoom", async (roomToJoin, newNumberOfMembersCallback) => {
+    nsSocket.on("joinRoom", async (roomToJoin) => {
+      //0.leave previous room
+      //[Set Iterator] { 'N0Pd0o1_5mUVtSHlAAAM', 'Other' } we need 'Other' this is the old room before entering new one
+      const roomTitle = [...nsSocket.rooms.keys()][1];
+      nsSocket.leave(roomTitle);
+      
+      //1.join the room
+      nsSocket.join(roomToJoin);
+      //find the room
+      const thisRoom = findRoom(ns, roomToJoin);
+      //send this room with history back to the client
+      nsSocket.emit("historyCatchUp", thisRoom.history);
+      //send back to the client the number of users in this room
       try {
-        //1.join the room
-        nsSocket.join(roomToJoin);
-        // //2 find number of clients in the room
-        // const listOfClients = await io
-        //   .of(ns.endpoint)
-        //   .in(roomToJoin)
-        //   .allSockets();
-        // newNumberOfMembersCallback(listOfClients.size);
-        //3 show history
-        //find the room
-        const thisRoom = findRoom(ns, roomToJoin);
-        //send this room back to the client
-        nsSocket.emit("historyCatchUp", thisRoom.history);
-        //send back the number of users in this room
-
         await updateUsersInTheRoom(ns, roomToJoin);
       } catch (error) {
-        console.error(err.message);
+        console.error(error.message);
       }
     });
     //get message from message form
@@ -75,12 +71,12 @@ namespaces.forEach((ns) => {
       //Send this message to all the sockets in the room
       //find the room
       const roomTitle = [...nsSocket.rooms.keys()][1];
-
       //find the room object for this room
       const roomObject = findRoom(ns, roomTitle);
+      //add message to history
       roomObject.addMessage(fullMsg);
       // console.log(roomObject);
-      //send
+      //send message to the client
       io.of(ns.endpoint).to(roomTitle).emit("messageToClient", fullMsg);
     });
   });

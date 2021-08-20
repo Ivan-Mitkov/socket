@@ -2,7 +2,7 @@ function joinRoom(roomName) {
   //send this room to the server
   //3 arg is callback for getting info from the server
   nsSocket.emit("joinRoom", roomName, (newNumberOfMembers) => {
-    updateCurrentRoom(newNumberOfMembersр, roomName);
+    updateCurrentRoom(newNumberOfMembers, roomName);
   });
   //get history from server
   nsSocket.on("historyCatchUp", (history) => {
@@ -13,6 +13,10 @@ function joinRoom(roomName) {
   nsSocket.on("updateMembers", (newNumberOfMembers) => {
     updateCurrentRoom(newNumberOfMembers, roomName);
   });
+
+  //search input
+  const findMessage=searchMessages();
+  
 }
 
 function updateHistory(history) {
@@ -32,4 +36,21 @@ function updateCurrentRoom(newMembers, roomName) {
     ".curr-room-num-users"
   ).innerHTML = `${newMembers} <span class="glyphicon glyphicon-user">`;
   document.querySelector(".curr-room-text").innerText = `${roomName}`;
+}
+
+function searchMessages() {
+  const searchInput = document.getElementById("search-box");
+  searchInput.addEventListener("input", (e) => {
+    // console.log(e.target.value);
+    let searchTerm = e.target.value.toLowerCase();
+    let messages = [...document.querySelectorAll(".message-text")]
+      .map((a) => a.innerText)
+      .filter((t) => {
+        if (t.toLowerCase().includes(searchTerm)) {
+          return t;
+        }
+      });
+
+    return messages;
+  });
 }

@@ -1,4 +1,13 @@
 function joinNs(url) {
+  //check if there is already socket
+  if (nsSocket) {
+    //close the socket when change namespaces
+    nsSocket.close();
+    //remove the event listener on changing namespaces
+    document
+      .querySelector("#user-message")
+      .removeEventListener("submit", addMessage);
+  }
   nsSocket = io(`http://localhost:8000${url}`);
   //room information for this particular client
   nsSocket.on("nsRoomLoad", (nsRooms) => {
@@ -19,9 +28,10 @@ function joinNs(url) {
       roomList.appendChild(liRoom);
       //add a click listener on each room
       liRoom.addEventListener("click", () => {
-        alert(`clicked ${room.roomTitle}`);
+        joinRoom(room.roomTitle);
       });
       //add user to the room
+      //first enter
       if (i === 0) {
         const topRoomName = room.roomTitle;
         joinRoom(topRoomName);
@@ -32,15 +42,8 @@ function joinNs(url) {
   //get value from text area
   document
     .querySelector(".message-form")
-    .addEventListener("submit", (event) => {
-      event.preventDefault();
-      const message = document.querySelector("#user-message").value;
-      //send value to the server
-      nsSocket.emit("newMessageToServer", {
-        text: message,
-      });
-    });
-
+    .addEventListener("submit", addMessage);
+  //receive message from the server
   nsSocket.on("messageToClient", (message) => {
     const listOfMessages = document.querySelector("#messages");
     const mesg = buildHTML(message);
@@ -49,6 +52,14 @@ function joinNs(url) {
   });
 }
 
+const addMessage = (event) => {
+  event.preventDefault();
+  const message = document.querySelector("#user-message").value;
+  //send value to the server
+  nsSocket.emit("newMessageToServer", {
+    text: message,
+  });
+};
 const buildHTML = (message) => {
   const { text, time, username, avatar } = message;
   const str = `<li>

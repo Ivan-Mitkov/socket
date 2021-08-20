@@ -20,7 +20,6 @@ const io = new Server(expressServer, {
 //create socket io server (io) / namespace
 io.on("connection", (socket) => {
   console.log("Connect to main namespace");
-
   //receive event
   //when receive message from client emit message to all clients
   socket.on("userMessageToServer", (message) => {
