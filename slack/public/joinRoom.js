@@ -39,10 +39,12 @@ function updateCurrentRoom(newMembers, roomName) {
 
 function searchMessages() {
   const searchInput = document.getElementById("search-box");
+
   searchInput.addEventListener("input", (e) => {
     // console.log(e.target.value);
     let searchTerm = e.target.value.toLowerCase();
     let messages = [...document.querySelectorAll("#messages > li")].map((t) => {
+      t.style.display = "block";
       if (
         t.children[1].children[1].innerHTML
           .toLowerCase()
