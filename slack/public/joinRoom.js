@@ -15,8 +15,7 @@ function joinRoom(roomName) {
   });
 
   //search input
-  const findMessage=searchMessages();
-  
+  searchMessages();
 }
 
 function updateHistory(history) {
@@ -43,14 +42,19 @@ function searchMessages() {
   searchInput.addEventListener("input", (e) => {
     // console.log(e.target.value);
     let searchTerm = e.target.value.toLowerCase();
-    let messages = [...document.querySelectorAll(".message-text")]
-      .map((a) => a.innerText)
-      .filter((t) => {
-        if (t.toLowerCase().includes(searchTerm)) {
-          return t;
-        }
-      });
-
-    return messages;
+    let messages = [...document.querySelectorAll("#messages > li")].map((t) => {
+      if (
+        t.children[1].children[1].innerHTML
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())
+      ) {
+        return t;
+      } else {
+        return (t.style.display = "none");
+      }
+    });
+    if (searchTerm === "") {
+      messages.map((x) => (x.style.display = "block"));
+    }
   });
 }
