@@ -45,7 +45,7 @@ function joinNs(url) {
     const listOfMessages = document.querySelector("#messages");
     const mesg = buildHTML(message);
     listOfMessages.appendChild(mesg);
-    text.value = "";
+    message.text.value = "";
   });
 }
 
