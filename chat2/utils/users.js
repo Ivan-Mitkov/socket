@@ -13,6 +13,7 @@ function getCurrentUser(id) {
 }
 //user leave chat
 function userLeave(id) {
+  console.log(users);
   return users.filter((user) => user.id === id)[0];
 }
 //get room user

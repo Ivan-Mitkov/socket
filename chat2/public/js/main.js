@@ -10,7 +10,13 @@ const { username, room } = Qs.parse(location.search, {
 const socket = io();
 
 //Join chat room
-socket.emit('joinRoom',{username,room})
+socket.emit("joinRoom", { username, room });
+
+//Get room and users
+socket.on("roomUsers", ({ room, users }) => {
+  outputRoomName(room);
+  outputUsers(users);
+});
 
 socket.on("message", (msg) => {
   // console.log(msg);
@@ -33,6 +39,18 @@ function outputMessageToDOM(msg) {
   messages.appendChild(div);
 }
 
+function outputRoomName(room) {
+  const roomName = document.getElementById("room-name");
+  roomName.innerText = room || "Javascript";
+}
+function outputUsers(users) {
+  const usersName = document.getElementById("users");
+  users.forEach(
+    (user) =>
+      (usersName.appendChild(document.createElement("li")).innerText =
+        user.username)
+  );
+}
 //event listeners
 function submitMessage(e) {
   e.preventDefault();

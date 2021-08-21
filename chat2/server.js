@@ -37,6 +37,11 @@ io.on("connect", (socket) => {
           `${user.username} has joined the ${user.room} chat`
         )
       );
+    //send users and room info
+    io.to(user.room).emit("roomUsers", {
+      room: user.room,
+      users: getRoomUsers(user.room),
+    });
   });
 
   //get message text from form
@@ -55,6 +60,11 @@ io.on("connect", (socket) => {
           `${user.username} has left the ${user.room} chat`
         )
       );
+      //send users and room info
+      io.to(user.room).emit("roomUsers", {
+        room: user.room,
+        users: getRoomUsers(user.room),
+      });
     }
   });
 });
