@@ -1,7 +1,16 @@
 const chatForm = document.getElementById("chat-form");
 const messages = document.querySelector(".chat-messages");
 
+//Get username and room from url
+//https://github.com/ljharb/qs?utm_source=cdnjs&utm_medium=cdnjs_link&utm_campaign=cdnjs_library
+const { username, room } = Qs.parse(location.search, {
+  ignoreQueryPrefix: true,
+});
+
 const socket = io();
+
+//Join chat room
+socket.emit('joinRoom',{username,room})
 
 socket.on("message", (msg) => {
   // console.log(msg);

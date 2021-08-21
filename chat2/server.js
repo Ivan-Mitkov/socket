@@ -3,6 +3,12 @@ const http = require("http");
 const express = require("express");
 const socketio = require("socket.io");
 const formatMessage = require("./utils/messages");
+const {
+  userJoin,
+  getCurrentUser,
+  userLeave,
+  getRoomUsers,
+} = require("./utils/users");
 
 const app = express();
 const server = http.createServer(app);
@@ -13,20 +19,43 @@ app.use(express.static(path.join(__dirname, "public")));
 
 const BOT_NAME = "ChatCord Bot";
 io.on("connect", (socket) => {
-  // console.log(`new socket connection`, socket.id);
-  socket.emit("message", formatMessage(BOT_NAME, "Welcome to the Chat"));
-  //broadcast when a user connects .broadcast emit to everybody EXEPT user that connects
-  socket.broadcast.emit(
-    "message",
-    formatMessage(BOT_NAME, `User *** has joined the chat`)
-  );
-  //runs when client disconnects
-  socket.on("disconnect", () => {
-    io.emit("message", formatMessage(BOT_NAME, `User *** has left the chat`));
+  //get username and room
+  //join a room
+  socket.on("joinRoom", ({ username, room }) => {
+    const user = userJoin(socket.id, username, room);
+    //join to the room
+    socket.join(user.room);
+    // console.log(`new socket connection`, socket.id);
+    socket.emit("message", formatMessage(BOT_NAME, "Welcome to the Chat"));
+    //broadcast when a user connects .broadcast emit to everybody EXEPT user that connects
+    socket.broadcast
+      .to(user.room)
+      .emit(
+        "message",
+        formatMessage(
+          BOT_NAME,
+          `${user.username} has joined the ${user.room} chat`
+        )
+      );
   });
+
   //get message text from form
   socket.on("chatMessage", (msg) => {
-    io.emit("message", formatMessage("USER", msg));
+    const user = getCurrentUser(socket.id);
+    io.to(user.room).emit("message", formatMessage(user.username, msg));
+  });
+  //runs when client disconnects
+  socket.on("disconnect", () => {
+    const user = userLeave(socket.id);
+    if (user) {
+      io.to(user.room).emit(
+        "message",
+        formatMessage(
+          BOT_NAME,
+          `${user.username} has left the ${user.room} chat`
+        )
+      );
+    }
   });
 });
 const PORT = 8000 || process.env.PORT;
