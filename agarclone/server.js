@@ -4,7 +4,11 @@ import helmet from "helmet";
 import { Server } from "socket.io";
 
 export const app = express();
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  })
+);
 const __dirname = path.resolve(path.dirname(""));
 
 app.use(express.static(path.join(__dirname, "/public")));
