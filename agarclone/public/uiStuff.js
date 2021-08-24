@@ -1,8 +1,10 @@
 let wHeight = $(window).height();
 let wWidth = $(window).width();
-let player = { }; //This is all things "this" player
-let orbs = [];
+let player = {}; //This is all things "this" player
+
 let players = [];
+//get data from socketStuff
+let orbs = [];
 
 let canvas = document.querySelector("#the-canvas");
 let context = canvas.getContext("2d");

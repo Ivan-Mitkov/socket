@@ -1,5 +1,6 @@
 function init() {
   draw();
+  console.log(orbs);
 }
 //========DRAW============
 const xCoor = 500;
@@ -7,10 +8,10 @@ const yCoor = 500;
 player.locX = Math.floor(xCoor * Math.random() + 10);
 player.locY = Math.floor(yCoor * Math.random() + 10);
 function draw() {
-  //clear canvas
-  context.clearRect(0, 0, canvas.width, canvas.height);
   //reset context translate
   context.setTransform(1, 0, 0, 1, 0, 0);
+  //clear canvas
+  context.clearRect(0, 0, canvas.width, canvas.height);
   //clamp the camera to the player
   const cameraX = -player.locX + canvas.width / 2;
   const cameraY = -player.locY + canvas.height / 2;
@@ -23,9 +24,16 @@ function draw() {
   context.strokeStyle = "rgb(255,70,255)";
   //https://www.w3schools.com/tags/canvas_arc.asp
   context.arc(player.locX, player.locY, 10, 0, 2 * Math.PI);
-  context.arc(200, 200, 10, 0, 2 * Math.PI);
+  // context.arc(200, 200, 10, 0, 2 * Math.PI);
   context.stroke();
   context.fill();
+  //draw orbs
+  orbs.forEach((orb) => {
+    context.beginPath();
+    context.fillStyle = orb.color;
+    context.arc(orb.locX, orb.locY, orb.radius, 0, 2 * Math.PI);
+    context.fill();
+  });
   requestAnimationFrame(draw);
 }
 
