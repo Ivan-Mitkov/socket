@@ -9,7 +9,7 @@
 //   worldHeight: 500,
 // };
 export class PlayerData {
-  constructor(playerName, settings) {
+  constructor(playerName = "", settings) {
     this.name = playerName;
     this.locX = Math.floor(settings.worldWidth * Math.random() + 10);
     this.locY = Math.floor(settings.worldHeight * Math.random() + 10);

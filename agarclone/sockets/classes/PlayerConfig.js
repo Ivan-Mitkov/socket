@@ -4,7 +4,7 @@ export class PlayerConfig {
     //mouse doesn't moved yet
     this.xVector = 0;
     this.yVector = 0;
-    this.speed = settings.defaultSpeed;
-    this.zoom = settings.defaultZoom;
+    this.speed = settings.defaultSpeed || 10;
+    this.zoom = settings.defaultZoom || 1.5;
   }
 }

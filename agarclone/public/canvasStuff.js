@@ -1,9 +1,8 @@
-
 //========DRAW============
 const xCoor = 500;
 const yCoor = 500;
-player.locX = Math.floor(xCoor * Math.random() + 10);
-player.locY = Math.floor(yCoor * Math.random() + 10);
+// player.locX = Math.floor(xCoor * Math.random() + 10);
+// player.locY = Math.floor(yCoor * Math.random() + 10);
 function draw() {
   //reset context translate
   context.setTransform(1, 0, 0, 1, 0, 0);
@@ -15,15 +14,19 @@ function draw() {
   //translate is cumulative
   context.translate(cameraX, cameraY);
   //start drawing
-  context.beginPath();
-  context.lineWidth = 3;
-  context.fillStyle = "rgb(255,0,0)";
-  context.strokeStyle = "rgb(255,70,255)";
-  //https://www.w3schools.com/tags/canvas_arc.asp
-  context.arc(player.locX, player.locY, 10, 0, 2 * Math.PI);
-  // context.arc(200, 200, 10, 0, 2 * Math.PI);
-  context.stroke();
-  context.fill();
+
+  //draw all the players
+  players.forEach((p) => {
+    context.beginPath();
+    context.lineWidth = 3;
+    context.fillStyle = p.color;
+    context.strokeStyle = p.color;
+    //https://www.w3schools.com/tags/canvas_arc.asp
+    context.arc(p.locX, p.locY, 10, 0, 2 * Math.PI);
+    // context.arc(200, 200, 10, 0, 2 * Math.PI);
+    context.stroke();
+    context.fill();
+  });
   //draw orbs
   orbs.forEach((orb) => {
     context.beginPath();
@@ -62,20 +65,7 @@ function move(event) {
     xVector = (angleDeg + 90) / 90;
     yVector = 1 - (angleDeg + 90) / 90;
   }
-
-  speed = 3;
-  xV = xVector;
-  yV = yVector;
-
-  if (
-    (player.locX < 5 && player.xVector < 0) ||
-    (player.locX > 500 && xV > 0)
-  ) {
-    player.locY -= speed * yV;
-  } else if ((player.locY < 5 && yV > 0) || (player.locY > 500 && yV < 0)) {
-    player.locX += speed * xV;
-  } else {
-    player.locX += speed * xV;
-    player.locY -= speed * yV;
-  }
+  //update camera for specific player
+  player.xVector = xVector;
+  player.yVector = yVector;
 }

@@ -10,6 +10,19 @@ function init() {
 }
 //get event for creating the field
 socket.on("initReturn", (data) => {
+  // console.log(data)
   //orbs[] in uiStuff
   orbs = data.orbs;
+  //send information to the server with player coor
+  setInterval(() => {
+    socket.emit("tick", { xVector: player.xVector, yVector: player.yVector });
+  }, 33);
+});
+
+socket.on("tock", (data) => {
+  // console.log("tock client: ", data);
+  //update players
+  players = data.players;
+  player.locX = data.playerX;
+  player.locY = data.playerY;
 });
