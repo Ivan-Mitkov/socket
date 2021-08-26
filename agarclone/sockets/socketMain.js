@@ -15,12 +15,18 @@ let settings = {
 };
 initGame();
 io.sockets.on("connect", (socket) => {
-  //make a player config object
-  let playerConfig = new PlayerConfig(settings);
-  let playerData = new PlayerData("name", settings);
-  //master player object to hold both
-  let player = new Player(socket.id, playerConfig, playerData);
-  socket.emit("init", { orbs });
+  //get the event emited on start button and create field
+  socket.on("init", (data) => {
+    //make a player config object
+    let playerConfig = new PlayerConfig(settings);
+    let playerData = new PlayerData(data.playerName, settings);
+    //master player object to hold both
+    let player = new Player(socket.id, playerConfig, playerData);
+    //after creating player emit event for orbs
+    socket.emit("initReturn", { orbs });
+    //
+    players.push(playerData);
+  });
 });
 //Run at the begging of a new game
 function initGame() {

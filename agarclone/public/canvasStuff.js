@@ -1,7 +1,4 @@
-function init() {
-  draw();
-  console.log(orbs);
-}
+
 //========DRAW============
 const xCoor = 500;
 const yCoor = 500;
@@ -82,5 +79,3 @@ function move(event) {
     player.locY -= speed * yV;
   }
 }
-//after developing move in uiStaff
-init();
