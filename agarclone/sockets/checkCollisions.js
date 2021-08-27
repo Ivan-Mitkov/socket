@@ -65,11 +65,10 @@ export function checkForPlayerCollisions(pData, pConfig, players, playerId) {
           pData.locY < pLocy + pData.radius + pR
         ) {
           // Pythagoras test
-          distance = Math.sqrt(
+          let distance = Math.sqrt(
             (pData.locX - pLocx) * (pData.locX - pLocx) +
               (pData.locY - pLocy) * (pData.locY - pLocy)
           );
-          console.log("DISTANCE: ", distance);
 
           if (distance < pData.radius + pR) {
             console.log("COLLISION");
@@ -82,16 +81,17 @@ export function checkForPlayerCollisions(pData, pConfig, players, playerId) {
               }
               players.splice(i, 1);
               resolve(collisionData);
-            } else if (pData.radius < pR) {
-              let collisionData = updateScores(curPlayer, pData);
-              players.forEach((p, i) => {
-                console.log(players[i].name, i);
-                if (pData.uid == p.uid) {
-                  players.splice(i, 1);
-                }
-              });
-              resolve(collisionData);
             }
+            //  else if (pData.radius < pR) {
+            //   let collisionData = updateScores(curPlayer, pData);
+            //   players.forEach((p, i) => {
+            //     console.log(players[i].name, i);
+            //     if (pData.uid == p.uid) {
+            //       players.splice(i, 1);
+            //     }
+            //   });
+            //   resolve(collisionData);
+            // }
           }
         }
       }
