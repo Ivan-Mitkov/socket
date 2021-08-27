@@ -46,15 +46,17 @@ export function checkForOrbCollisions(pData, pConfig, orbs, settings) {
   });
 }
 
-export function checkForPlayerCollisions(pData, pConfig, players) {
+export function checkForPlayerCollisions(pData, pConfig, players, playerId) {
+  // console.log(pData);
   return new Promise((resolve, reject) => {
     //PLAYER COLLISIONS
     players.forEach((curPlayer, i) => {
-      if (curPlayer.uid != pData.uid) {
-        // console.log(curPlayer.uid,pData.uid)
+      //player1 must be different from him self
+      if (curPlayer.uuid != pData.uuid) {
         let pLocx = curPlayer.locX;
         let pLocy = curPlayer.locY;
         let pR = curPlayer.radius;
+        // console.log(pLocx, pLocy, pR);
         // AABB Test - Axis-aligned bounding boxes
         if (
           pData.locX + pData.radius + pR > pLocx &&
@@ -67,7 +69,10 @@ export function checkForPlayerCollisions(pData, pConfig, players) {
             (pData.locX - pLocx) * (pData.locX - pLocx) +
               (pData.locY - pLocy) * (pData.locY - pLocy)
           );
+          console.log("DISTANCE: ", distance);
+
           if (distance < pData.radius + pR) {
+            console.log("COLLISION");
             //COLLISION!!
             if (pData.radius > pR) {
               // ENEMY DEATH

@@ -10,15 +10,25 @@ let orbs = [];
 let players = [];
 //game settings
 let settings = {
-  defaultOrbs: 5000,
-  defaultSpeed: 10,
+  defaultOrbs: 500,
+  defaultSpeed: 5,
   defaultRadius: 5,
   //as the player get bigger the zoom needs to go out
   defaultZoom: 1.5,
-  worldWidth: 5000,
-  worldHeight: 5000,
+  worldWidth: 500,
+  worldHeight: 500,
 };
 initGame();
+setInterval(() => {
+  //more efficient sending data
+  //send to all players where players are
+  if (players.length > 0) {
+    //broadcast to the enrire namespace
+    io.to("game").emit("tock", {
+      players,
+    });
+  }
+}, 33); //there are 30 33's in 1 second so to run with rate 30 fps 33
 
 io.sockets.on("connect", (socket) => {
   let player = {};
@@ -35,8 +45,8 @@ io.sockets.on("connect", (socket) => {
     player = new Player(socket.id, playerConfig, playerData);
     //Issue a message to every connected socket every 30 fps
     setInterval(() => {
-      io.to("game").emit("tock", {
-        players,
+      // broadcast to just the client define the camera for a particular player
+      socket.emit("tickTock", {
         playerX: player.playerData.locX,
         playerY: player.playerData.locY,
       });
@@ -44,7 +54,8 @@ io.sockets.on("connect", (socket) => {
 
     //after creating player emit event for orbs
     socket.emit("initReturn", { orbs });
-    //
+    //what others need to know
+    // console.log(playerData);
     players.push(playerData);
   });
   //get data for player movement
@@ -83,7 +94,6 @@ io.sockets.on("connect", (socket) => {
     capturedOrb
       .then((data) => {
         // console.log("collision", data);
-        //
         const orbData = {
           orbIndex: data,
           newOrb: orbs[data],
@@ -95,6 +105,20 @@ io.sockets.on("connect", (socket) => {
       .catch(() => {
         // console.log("No collision");
       });
+    //PLAYER collisions
+    // console.log(players);
+    let playerDeath = checkForPlayerCollisions(
+      player.playerData,
+      player.playerConfig,
+      players,
+      player.socketId
+    );
+
+    playerDeath
+      .then((data) => {
+        console.log("Player collision");
+      })
+      .catch(() => {});
   });
 });
 //Run at the begging of a new game

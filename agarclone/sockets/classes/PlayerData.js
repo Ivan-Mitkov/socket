@@ -8,8 +8,11 @@
 //   worldWidth: 500,
 //   worldHeight: 500,
 // };
+import { v4 as uuidv4 } from "uuid";
+
 export class PlayerData {
   constructor(playerName = "", settings) {
+    this.uuid = uuidv4();
     this.name = playerName;
     this.locX = Math.floor(settings.worldWidth * Math.random() + 10);
     this.locY = Math.floor(settings.worldHeight * Math.random() + 10);

@@ -21,16 +21,19 @@ socket.on("initReturn", (data) => {
     }
   }, 33);
 });
-
+//get where all players are
 socket.on("tock", (data) => {
   // console.log("tock client: ", data);
   //update players
   players = data.players;
-  player.locX = data.playerX;
-  player.locY = data.playerY;
 });
 
 socket.on("orbSwitch", (data) => {
   // console.log(data);
   orbs.splice(data.orbIndex, 1, data.newOrb);
+});
+//get socket player where it is
+socket.on("tickTock", (data) => {
+  player.locX = data.playerX;
+  player.locY = data.playerY;
 });
