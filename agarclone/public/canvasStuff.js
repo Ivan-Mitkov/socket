@@ -22,7 +22,7 @@ function draw() {
     context.fillStyle = p.color;
     context.strokeStyle = p.color;
     //https://www.w3schools.com/tags/canvas_arc.asp
-    context.arc(p.locX, p.locY, 10, 0, 2 * Math.PI);
+    context.arc(p.locX, p.locY, p.radius, 0, 2 * Math.PI);
     // context.arc(200, 200, 10, 0, 2 * Math.PI);
     context.stroke();
     context.fill();

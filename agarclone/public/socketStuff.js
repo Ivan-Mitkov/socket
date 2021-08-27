@@ -10,12 +10,15 @@ function init() {
 }
 //get event for creating the field
 socket.on("initReturn", (data) => {
-  // console.log(data)
-  //orbs[] in uiStuff
   orbs = data.orbs;
-  //send information to the server with player coor
   setInterval(() => {
-    socket.emit("tick", { xVector: player.xVector, yVector: player.yVector });
+    //if only xVector is defined
+    if (player.xVector) {
+      socket.emit("tick", {
+        xVector: player.xVector,
+        yVector: player.yVector,
+      });
+    }
   }, 33);
 });
 
@@ -25,4 +28,9 @@ socket.on("tock", (data) => {
   players = data.players;
   player.locX = data.playerX;
   player.locY = data.playerY;
+});
+
+socket.on("orbSwitch", (data) => {
+  // console.log(data);
+  orbs.splice(data.orbIndex, 1, data.newOrb);
 });

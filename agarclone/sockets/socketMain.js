@@ -1,18 +1,22 @@
 // Where all our main socket stuff will go
 import { io } from "../server.js";
 import { Player, PlayerConfig, PlayerData, Orb } from "./classes/index.js";
+import {
+  checkForOrbCollisions,
+  checkForPlayerCollisions,
+} from "./checkCollisions.js";
 //coresponding variables in back and front end
 let orbs = [];
 let players = [];
 //game settings
 let settings = {
-  defaultOrbs: 500,
-  defaultSpeed: 3,
-  defaultRadius: 6,
+  defaultOrbs: 5000,
+  defaultSpeed: 10,
+  defaultRadius: 5,
   //as the player get bigger the zoom needs to go out
   defaultZoom: 1.5,
-  worldWidth: 500,
-  worldHeight: 500,
+  worldWidth: 5000,
+  worldHeight: 5000,
 };
 initGame();
 
@@ -45,27 +49,52 @@ io.sockets.on("connect", (socket) => {
   });
   //get data for player movement
   socket.on("tick", (data) => {
-    // console.log("tick", data);//tick { xVector: 0.45085653968277384, yVector: -0.5491434603172262 }
-    // move player movement from client side to server side
-    let speed = player.playerConfig.speed;
-    //update playerConfig object
-    let xV = (player.playerConfig.xVector = data.xVector);
-    let yV = (player.playerConfig.yVector = data.yVector);
+    //if there are valid xVector and yVector
+    if (data.xVector && data.yVector && player.playerConfig) {
+      // console.log("tick", data);//tick { xVector: 0.45085653968277384, yVector: -0.5491434603172262 }
+      // move player movement from client side to server side
+      let speed = player.playerConfig.speed;
+      //update playerConfig object
+      let xV = (player.playerConfig.xVector = data.xVector);
+      let yV = (player.playerConfig.yVector = data.yVector);
 
-    if (
-      (player.playerData.locX < 5 && player.playerData.xVector < 0) ||
-      (player.playerData.locX > 500 && xV > 0)
-    ) {
-      player.playerData.locY -= speed * yV;
-    } else if (
-      (player.playerData.locY < 5 && yV > 0) ||
-      (player.playerData.locY > 500 && yV < 0)
-    ) {
-      player.playerData.locX += speed * xV;
-    } else {
-      player.playerData.locX += speed * xV;
-      player.playerData.locY -= speed * yV;
+      if (
+        (player.playerData.locX < 5 && player.playerData.xVector < 0) ||
+        (player.playerData.locX > settings.worldWidth && xV > 0)
+      ) {
+        player.playerData.locY -= speed * yV;
+      } else if (
+        (player.playerData.locY < 5 && yV > 0) ||
+        (player.playerData.locY > settings.worldHeight && yV < 0)
+      ) {
+        player.playerData.locX += speed * xV;
+      } else {
+        player.playerData.locX += speed * xV;
+        player.playerData.locY -= speed * yV;
+      }
     }
+    let capturedOrb = checkForOrbCollisions(
+      player.playerData,
+      player.playerConfig,
+      orbs,
+      settings
+    );
+
+    capturedOrb
+      .then((data) => {
+        // console.log("collision", data);
+        //
+        const orbData = {
+          orbIndex: data,
+          newOrb: orbs[data],
+        };
+        // console.log(orbData);
+        //emit to all sockets
+        io.sockets.emit("orbSwitch", orbData);
+      })
+      .catch(() => {
+        // console.log("No collision");
+      });
   });
 });
 //Run at the begging of a new game

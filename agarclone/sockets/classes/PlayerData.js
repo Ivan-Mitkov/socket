@@ -16,6 +16,7 @@ export class PlayerData {
     this.radius = settings.defaultRadius;
     this.color = this.getRandomColor();
     this.score = 0;
+    this.orbsAbsorbed = 0;
   }
 
   getRandomColor() {
