@@ -1,5 +1,6 @@
 let socket = io.connect("http://localhost:8000");
 const htmlLeaderBoard = document.querySelector(".leader-board");
+const gameMessage = document.getElementById("game-message");
 //this function is called when user hit start button
 function init() {
   draw();
@@ -44,4 +45,14 @@ socket.on("updateLeaderBoard", (data) => {
   data.forEach((curPlayer) => {
     htmlLeaderBoard.innerHTML += `<li class="leaderboard-player">${curPlayer.name}-${curPlayer.score}</li>`;
   });
+});
+
+socket.on("playerDeath", (data) => {
+  console.log(`data`, data);
+  gameMessage.innerHTML = "";
+  gameMessage.innerHTML = `${data.died.name} was killed by ${data.killedBy.name}`;
+  gameMessage.style.backgroundColor = "#00e6e6";
+  gameMessage.style.opacity = 1;
+  gameMessage.style.display = "block";
+  $("#game-message").fadeOut(5000);
 });

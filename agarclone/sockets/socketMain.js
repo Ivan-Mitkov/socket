@@ -10,13 +10,13 @@ let orbs = [];
 let players = [];
 //game settings
 let settings = {
-  defaultOrbs: 500,
+  defaultOrbs: 5000,
   defaultSpeed: 5,
   defaultRadius: 5,
   //as the player get bigger the zoom needs to go out
   defaultZoom: 1.5,
-  worldWidth: 500,
-  worldHeight: 500,
+  worldWidth: 5000,
+  worldHeight: 5000,
 };
 initGame();
 setInterval(() => {
@@ -125,8 +125,28 @@ io.sockets.on("connect", (socket) => {
         //emit to all sockets
         //update score
         io.sockets.emit("updateLeaderBoard", getLeaderBoard());
+        io.sockets.emit("playerDeath", data);
+        //{
+        //   died: killed,
+        //   killedBy: killer,
+        // };
       })
       .catch(() => {});
+  });
+  socket.on("disconnect", (data) => {
+    // console.log(data)//transport close
+    //find who just left ...which player in players
+    if (player && player.playerData) {
+      //if player exists
+      players.forEach((p, i) => {
+        //remove player from the array
+        if (p.uuid == player.playerData.uuid) {
+          players.splice(i, 1);
+          io.sockets.emit("updateLeaderBoard", getLeaderBoard());
+        }
+      });
+      //if there is DB update DB
+    }
   });
 });
 function getLeaderBoard() {
