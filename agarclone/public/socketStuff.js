@@ -1,5 +1,5 @@
 let socket = io.connect("http://localhost:8000");
-
+const htmlLeaderBoard = document.querySelector(".leader-board");
 //this function is called when user hit start button
 function init() {
   draw();
@@ -36,4 +36,12 @@ socket.on("orbSwitch", (data) => {
 socket.on("tickTock", (data) => {
   player.locX = data.playerX;
   player.locY = data.playerY;
+});
+//get data from server to update leader board
+socket.on("updateLeaderBoard", (data) => {
+  // console.log(`data`, data)
+  htmlLeaderBoard.innerHTML = "";
+  data.forEach((curPlayer) => {
+    htmlLeaderBoard.innerHTML += `<li class="leaderboard-player">${curPlayer.name}-${curPlayer.score}</li>`;
+  });
 });

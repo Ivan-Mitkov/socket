@@ -68,7 +68,7 @@ io.sockets.on("connect", (socket) => {
       //update playerConfig object
       let xV = (player.playerConfig.xVector = data.xVector);
       let yV = (player.playerConfig.yVector = data.yVector);
-
+      //server decides where new coordinates are
       if (
         (player.playerData.locX < 5 && player.playerData.xVector < 0) ||
         (player.playerData.locX > settings.worldWidth && xV > 0)
@@ -84,6 +84,7 @@ io.sockets.on("connect", (socket) => {
         player.playerData.locY -= speed * yV;
       }
     }
+    //check for orb collisions
     let capturedOrb = checkForOrbCollisions(
       player.playerData,
       player.playerConfig,
@@ -100,11 +101,15 @@ io.sockets.on("connect", (socket) => {
         };
         // console.log(orbData);
         //emit to all sockets
+        //update score
+        io.sockets.emit("updateLeaderBoard", getLeaderBoard());
+        //send new orbs
         io.sockets.emit("orbSwitch", orbData);
       })
       .catch(() => {
         // console.log("No collision");
       });
+
     //PLAYER collisions
     // console.log(players);
     let playerDeath = checkForPlayerCollisions(
@@ -116,11 +121,27 @@ io.sockets.on("connect", (socket) => {
 
     playerDeath
       .then((data) => {
-        console.log("Player collision");
+        // console.log("Player collision");
+        //emit to all sockets
+        //update score
+        io.sockets.emit("updateLeaderBoard", getLeaderBoard());
       })
       .catch(() => {});
   });
 });
+function getLeaderBoard() {
+  //sort players in descending order
+  players.sort((a, b) => {
+    return b.score - a.score;
+  });
+  let leaderBoard = players.map((curPlayer) => {
+    return {
+      name: curPlayer.name,
+      score: curPlayer.score,
+    };
+  });
+  return leaderBoard;
+}
 //Run at the begging of a new game
 function initGame() {
   for (let index = 0; index < settings.defaultOrbs; index++) {
